@@ -69,6 +69,7 @@ namespace BeefBodyWeightSummaryPigUDF
             else
             {
                 fwt = line.Weights.Last();
+                //test
             }
 
             // calculate ADG
