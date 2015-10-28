@@ -7,8 +7,8 @@
     <ProjectGuid>{310E20B9-CF8D-4608-B1FB-5F50AC31FB7A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PigBeefBodyWeightUDF</RootNamespace>
-    <AssemblyName>PigBeefBodyWeightUDF</AssemblyName>
+    <RootNamespace>BeefBodyWeightSummaryPigUDF</RootNamespace>
+    <AssemblyName>BeefBodyWeightSummaryPigUDF</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

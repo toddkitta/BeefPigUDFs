@@ -17,7 +17,7 @@ namespace PigBeefBodyWeightUDF
             while ((line = Console.ReadLine()) != null)
             {
                 // see if this is the header row
-                if (line.Contains("\"Weight\""))
+                if (line.Contains("\"Ration\""))
                 {
                     headerDates = ParseHeaderDates(line);
                     continue;
@@ -36,13 +36,23 @@ namespace PigBeefBodyWeightUDF
             }
         }
 
-        private static string[] BuildOutput(BodyWeightPayload line, DateTime[] dates)
+        private static string[,] BuildOutput(BodyWeightPayload line, DateTime[] dates)
         {
+            // 1) "Pen"
+            // 2) "TRT"
+            // 3) "Rep"
+            // 4) "Ration"
+            // 5) "ID"
+            // 6) "IWT"
+            // 7) "FWT"
+            // 8) "ADG"
+            string[,] results = new string[dates.Length, 8];
+
             decimal? iwt = null;
             decimal? fwt = null;
 
             // check if the first two dates are contiguous
-            if (dates[1].Subtract(dates[0]).Days == 1)
+            if(AreDatesContiguous(dates[0], dates[1]))
             {
                 iwt = line.Weights.Take(2).Average();
             }
@@ -52,7 +62,7 @@ namespace PigBeefBodyWeightUDF
             }
 
             // check if the last two dates are contiguous
-            if (dates.Last().Subtract(dates[dates.Length - 2]).Days == 1)
+            if(AreDatesContiguous(dates[dates.Length - 2], dates[dates.Length - 1]))
             {
                 fwt = line.Weights.Skip(line.Weights.Length - 2).Average();
             }
@@ -61,7 +71,12 @@ namespace PigBeefBodyWeightUDF
                 fwt = line.Weights.Last();
             }
 
-            return null;
+            return results;
+        }
+
+        private static bool AreDatesContiguous(DateTime date1, DateTime date2)
+        {
+            return (date2.Date - date1.Date).Days == 1;
         }
 
         private static DateTime[] ParseHeaderDates(string line)
