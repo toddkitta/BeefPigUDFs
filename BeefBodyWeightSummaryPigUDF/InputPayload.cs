@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PigBeefBodyWeightUDF
+namespace BeefBodyWeightSummaryPigUDF
 {
-    public struct BodyWeightPayload
+    public struct InputPayload
     {
         public string StudyID { get; set; }
         public DateTime StudyStartDate { get; set; }

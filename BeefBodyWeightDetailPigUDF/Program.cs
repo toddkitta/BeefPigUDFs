@@ -3,11 +3,11 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace BeefBodyWeightSummaryPigUDF
+namespace BeefBodyWeightDetailPigUDF
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
             string line;
             DateTime[] headerDates = null;
@@ -33,65 +33,31 @@ namespace BeefBodyWeightSummaryPigUDF
             }
         }
 
-        private static string[] BuildOutput(InputPayload line, DateTime[] dates)
+        private static string[,] BuildOutput(InputPayload line, DateTime[] dates)
         {
             // 1) "Pen"
             // 2) "TRT"
             // 3) "Rep"
             // 4) "Ration"
             // 5) "ID"
-            // 6) "IWT"
-            // 7) "FWT"
+            // 6) "Date"
+            // 7) "Period"
             // 8) "ADG"
-            string[] results = new string[8];
+            string[,] results = new string[dates.Length, 8];
 
-            decimal? iwt = null;
-            decimal? fwt = null;
-            decimal? adg = null;
-
-            // calculate IWT
-            // check if the first two dates are contiguous
-            if(AreDatesContiguous(dates[0], dates[1]))
+            // create a line for each date
+            for(int i = 0; i < dates.Length; i++)
             {
-                iwt = line.Weights.Take(2).Average();
-            }
-            else
-            {
-                iwt = line.Weights[0];
-            }
+                decimal? adg = null;
 
-            // calculate FWT
-            // check if the last two dates are contiguous
-            if(AreDatesContiguous(dates[dates.Length - 2], dates[dates.Length - 1]))
-            {
-                fwt = line.Weights.Skip(line.Weights.Length - 2).Average();
             }
-            else
-            {
-                fwt = line.Weights.Last();
-            }
-
-            // calculate ADG
-            int daysInStudy = (dates[dates.Length - 1].Date - dates[0].Date).Days;
-            decimal gain = line.Weights[line.Weights.Length - 1] - line.Weights[0];
-            if (daysInStudy > 0)
-                adg = gain / daysInStudy;
-
-            results[0] = line.Pen;
-            results[1] = line.TRT;
-            results[2] = line.Rep;
-            results[3] = line.Ration;
-            results[4] = line.ID;
-            results[5] = iwt.HasValue ? iwt.Value.ToString() : "0";
-            results[6] = fwt.HasValue ? fwt.Value.ToString() : "0";
-            results[7] = adg.HasValue ? adg.Value.ToString() : "0";
 
             return results;
         }
 
         private static bool AreDatesContiguous(DateTime date1, DateTime date2)
         {
-            return Math.Abs((date2.Date - date1.Date).Days) == 1;
+            return (date2.Date - date1.Date).Days == 1;
         }
 
         private static DateTime[] ParseHeaderDates(string line)
