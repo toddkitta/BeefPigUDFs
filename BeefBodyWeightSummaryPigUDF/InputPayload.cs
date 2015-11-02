@@ -15,7 +15,6 @@ namespace BeefBodyWeightSummaryPigUDF
         public string Rep { get; set; }
         public string Ration { get; set; }
         public string ID { get; set; }
-        public decimal Weight { get; set; }
         public decimal[] Weights{ get; set; }
     }
 }

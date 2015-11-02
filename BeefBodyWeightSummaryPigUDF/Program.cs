@@ -14,7 +14,7 @@ namespace BeefBodyWeightSummaryPigUDF
             while ((line = Console.ReadLine()) != null)
             {
                 // see if this is the header row
-                if (line.Contains("\"Ration\""))
+                if (line.Contains("Ration"))
                 {
                     headerDates = ParseHeaderDates(line);
                     continue;
@@ -51,7 +51,7 @@ namespace BeefBodyWeightSummaryPigUDF
 
             // calculate IWT
             // check if the first two dates are contiguous
-            if(AreDatesContiguous(dates[0], dates[1]))
+            if (AreDatesContiguous(dates[0], dates[1]))
             {
                 iwt = line.Weights.Take(2).Average();
             }
@@ -62,7 +62,7 @@ namespace BeefBodyWeightSummaryPigUDF
 
             // calculate FWT
             // check if the last two dates are contiguous
-            if(AreDatesContiguous(dates[dates.Length - 2], dates[dates.Length - 1]))
+            if (AreDatesContiguous(dates[dates.Length - 2], dates[dates.Length - 1]))
             {
                 fwt = line.Weights.Skip(line.Weights.Length - 2).Average();
             }
@@ -97,7 +97,7 @@ namespace BeefBodyWeightSummaryPigUDF
         private static DateTime[] ParseHeaderDates(string line)
         {
             var fields = GetFields(line);
-            return fields.Skip(8).Select(s => DateTime.Parse(s)).ToArray();
+            return fields.Skip(7).Select(s => DateTime.Parse(s)).ToArray();
         }
 
         private static InputPayload GetPayloadFromLine(string line)
@@ -113,8 +113,7 @@ namespace BeefBodyWeightSummaryPigUDF
                 Rep = fields[4],
                 Ration = fields[5],
                 ID = fields[6],
-                Weight = Decimal.Parse(fields[7]),
-                Weights = fields.Skip(8).Select(s => Decimal.Parse(s)).ToArray()
+                Weights = fields.Skip(7).Select(s => Decimal.Parse(s)).ToArray()
             };
 
             return payload;
