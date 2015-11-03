@@ -8,8 +8,6 @@ namespace BeefBodyWeightSummaryPigUDF
 {
     public struct InputPayload
     {
-        public string StudyID { get; set; }
-        public DateTime StudyStartDate { get; set; }
         public string Pen { get; set; }
         public string TRT { get; set; }
         public string Rep { get; set; }

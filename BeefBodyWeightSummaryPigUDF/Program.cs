@@ -7,14 +7,58 @@ namespace BeefBodyWeightSummaryPigUDF
 {
     public class Program
     {
+        //public static void Main(string[] args)
+        //{
+        //    foreach (var file in Directory.GetFiles(@"C:\LOL Data\Weight", "*.csv"))
+        //    {
+        //        string fullLineFromFile;
+        //        DateTime[] headerDates = null;
+
+        //        StreamReader sr = new StreamReader(file);
+        //        while ((fullLineFromFile = sr.ReadLine()) != null)
+        //        //while ((fullLine = Console.ReadLine()) != null)
+        //        {
+        //            string fullAzurePath = "wasb://hdidata@panctest.blob.core.windows.net/Weight/" + Path.GetFileName(file);
+        //            string fullLine = fullAzurePath + "\t" + fullLineFromFile;
+
+        //            string[] fullLineParts = fullLine.Split('\t');
+        //            string studyId = GetStudyId(fullLineParts[0]);
+        //            string line = fullLineParts[1];
+
+        //            // see if this is the header row
+        //            if (line.ToLower().Contains("ration"))
+        //            {
+        //                headerDates = ParseHeaderDates(line);
+        //                continue;
+        //            }
+
+        //            var payload = GetPayloadFromLine(line);
+        //            if (headerDates.Length != payload.Weights.Length)
+        //            {
+        //                // well, that's weird
+        //                continue;
+        //            }
+
+        //            var output = BuildOutput(payload, headerDates);
+
+        //            // TODO: incorporate study into payload
+        //            Console.WriteLine(studyId + "\t" + String.Join("\t", output));
+        //        }
+        //    }
+        //}
+
         public static void Main(string[] args)
         {
-            string line;
+            string fullLine;
             DateTime[] headerDates = null;
-            while ((line = Console.ReadLine()) != null)
+            while ((fullLine = Console.ReadLine()) != null)
             {
+                string[] fullLineParts = fullLine.Split('\t');
+                string studyId = GetStudyId(fullLineParts[0]);
+                string line = fullLineParts[1];
+
                 // see if this is the header row
-                if (line.Contains("Ration"))
+                if (line.ToLower().Contains("ration"))
                 {
                     headerDates = ParseHeaderDates(line);
                     continue;
@@ -29,8 +73,14 @@ namespace BeefBodyWeightSummaryPigUDF
 
                 var output = BuildOutput(payload, headerDates);
 
-                Console.WriteLine(String.Join(",", output));
+                // TODO: incorporate study into payload
+                Console.WriteLine(studyId + "\t" + String.Join("\t", output));
             }
+        }
+
+        private static string GetStudyId(string filePath)
+        {
+            return filePath.Split('/').Last().Split('.').First();
         }
 
         private static string[] BuildOutput(InputPayload line, DateTime[] dates)
@@ -44,44 +94,47 @@ namespace BeefBodyWeightSummaryPigUDF
             // 7) "FWT"
             // 8) "ADG"
             string[] results = new string[8];
-
-            decimal? iwt = null;
-            decimal? fwt = null;
-            decimal? adg = null;
-
-            // calculate IWT
-            // check if the first two dates are contiguous
-            if (AreDatesContiguous(dates[0], dates[1]))
-            {
-                iwt = line.Weights.Take(2).Average();
-            }
-            else
-            {
-                iwt = line.Weights[0];
-            }
-
-            // calculate FWT
-            // check if the last two dates are contiguous
-            if (AreDatesContiguous(dates[dates.Length - 2], dates[dates.Length - 1]))
-            {
-                fwt = line.Weights.Skip(line.Weights.Length - 2).Average();
-            }
-            else
-            {
-                fwt = line.Weights.Last();
-            }
-
-            // calculate ADG
-            int daysInStudy = (dates[dates.Length - 1].Date - dates[0].Date).Days;
-            decimal gain = line.Weights[line.Weights.Length - 1] - line.Weights[0];
-            if (daysInStudy > 0)
-                adg = gain / daysInStudy;
-
             results[0] = line.Pen;
             results[1] = line.TRT;
             results[2] = line.Rep;
             results[3] = line.Ration;
             results[4] = line.ID;
+
+            decimal? iwt = null;
+            decimal? fwt = null;
+            decimal? adg = null;
+
+            if (dates.Length > 1)
+            {
+                // calculate IWT
+                // check if the first two dates are contiguous
+                if (AreDatesContiguous(dates[0], dates[1]))
+                {
+                    iwt = line.Weights.Take(2).Average();
+                }
+                else
+                {
+                    iwt = line.Weights[0];
+                }
+
+                // calculate FWT
+                // check if the last two dates are contiguous
+                if (AreDatesContiguous(dates[dates.Length - 2], dates[dates.Length - 1]))
+                {
+                    fwt = line.Weights.Skip(line.Weights.Length - 2).Average();
+                }
+                else
+                {
+                    fwt = line.Weights.Last();
+                }
+
+                // calculate ADG
+                int daysInStudy = (dates[dates.Length - 1].Date - dates[0].Date).Days;
+                decimal gain = line.Weights[line.Weights.Length - 1] - line.Weights[0];
+                if (daysInStudy > 0)
+                    adg = gain / daysInStudy;
+            }
+
             results[5] = iwt.HasValue ? iwt.Value.ToString() : "0";
             results[6] = fwt.HasValue ? fwt.Value.ToString() : "0";
             results[7] = adg.HasValue ? adg.Value.ToString() : "0";
@@ -97,7 +150,7 @@ namespace BeefBodyWeightSummaryPigUDF
         private static DateTime[] ParseHeaderDates(string line)
         {
             var fields = GetFields(line);
-            return fields.Skip(7).Select(s => DateTime.Parse(s)).ToArray();
+            return fields.Skip(5).Select(s => DateTime.Parse(s)).ToArray();
         }
 
         private static InputPayload GetPayloadFromLine(string line)
@@ -106,14 +159,12 @@ namespace BeefBodyWeightSummaryPigUDF
 
             var payload = new InputPayload()
             {
-                StudyStartDate = DateTime.Parse(fields[0]),
-                StudyID = fields[1],
-                Pen = fields[2],
-                TRT = fields[3],
-                Rep = fields[4],
-                Ration = fields[5],
-                ID = fields[6],
-                Weights = fields.Skip(7).Select(s => Decimal.Parse(s)).ToArray()
+                Pen = fields[0],
+                TRT = fields[1],
+                Rep = fields[2],
+                Ration = fields[3],
+                ID = fields[4],
+                Weights = fields.Skip(5).Select(s => !String.IsNullOrWhiteSpace(s) ? Decimal.Parse(s) : 0).ToArray()
             };
 
             return payload;
