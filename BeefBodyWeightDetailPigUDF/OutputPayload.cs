@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BeefBodyWeightDetailPigUDF
 {
-    public class InputPayload
+    public class OutputPayload
     {
         public string StudyID { get; set; }
         public string Pen { get; set; }
@@ -14,6 +14,11 @@ namespace BeefBodyWeightDetailPigUDF
         public string Rep { get; set; }
         public string Ration { get; set; }
         public string ID { get; set; }
-        public decimal[] Weights{ get; set; }
+        public DateTime Date { get; set; }
+        public decimal Weight { get; set; }
+        public string Period { get; set; }
+        public int DaysInPeriod { get; set; }
+        public int RunningDays { get; set; }
+        public decimal ADG { get; set; }
     }
 }
