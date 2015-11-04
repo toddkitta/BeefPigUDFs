@@ -11,13 +11,35 @@ namespace MBIUDF
     {
         static void Main(string[] args)
         {
-            //ProcessDataFromHadoop();
-            ProcessLocalFiles();
+            ProcessDataFromHadoop();
+            //ProcessLocalFiles();
+        }
+
+        private static void ProcessDataFromHadoop()
+        {
+            string fullLine;
+
+            string[] animals = null;
+            string[] trts = null;
+            string[] reps = null;
+
+            while ((fullLine = Console.ReadLine()) != null)
+            {
+                var output = ProcessLine(fullLine, animals, trts, reps, out animals, out trts, out reps);
+
+                if (output != null)
+                {
+                    foreach (string[] lineValues in output)
+                    {
+                        Console.WriteLine(String.Join("\t", lineValues));
+                    }
+                }
+            }
         }
 
         private static void ProcessLocalFiles()
         {
-            foreach (var file in Directory.GetFiles(@"C:\Users\toddk\Desktop\Reorg\MBI", "*.csv"))
+            foreach (var file in Directory.GetFiles(@"D:\OneDrive - Microsoft\Customers\Land O Lakes\Reorganzied Data\MBI", "*.csv"))
             {
                 string fullLineFromFile;
 
@@ -42,11 +64,6 @@ namespace MBIUDF
                     }
                 }
             }
-        }
-
-        private static void ProcessDataFromHadoop()
-        {
-            throw new NotImplementedException();
         }
 
         private static string[][] ProcessLine(string fullLine, string[] animalsIn, string[] trtsIn, string[] repsIn, out string[] animalsOut, out string[] trtsOut, out string[] repsOut)
