@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeefBodyWeightDetailPigUDF"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicTest", "BasicTest\BasicTest.csproj", "{FEB0776D-22DB-4548-BF64-E70D896808B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MBIUDF", "MBIUDF\MBIUDF.csproj", "{CEC7A767-F2E8-4A86-A053-4D439B014C84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FEB0776D-22DB-4548-BF64-E70D896808B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEB0776D-22DB-4548-BF64-E70D896808B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEB0776D-22DB-4548-BF64-E70D896808B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC7A767-F2E8-4A86-A053-4D439B014C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC7A767-F2E8-4A86-A053-4D439B014C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC7A767-F2E8-4A86-A053-4D439B014C84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC7A767-F2E8-4A86-A053-4D439B014C84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
